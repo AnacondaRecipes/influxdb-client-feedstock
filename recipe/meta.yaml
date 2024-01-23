@@ -16,12 +16,13 @@ build:
 
   # noarch: only build on linux64
   skip: true # [not linux64]
-  script: {{ PYTHON }} -m pip install . -vv
+  script: {{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
 
 requirements:
   host:
     - pip
     - python >=3.7
+    - wheel
   run:
     - python >=3.7
     - reactivex >=4.0.4
