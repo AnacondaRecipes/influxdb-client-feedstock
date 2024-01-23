@@ -1,5 +1,5 @@
 {% set name = "influxdb-client" %}
-{% set version = "1.31.0" %}
+{% set version = "1.39.0" %}
 
 
 package:
@@ -8,25 +8,28 @@ package:
 
 source:
   url: https://pypi.io/packages/source/{{ name[0] }}/{{ name }}/influxdb_client-{{ version }}.tar.gz
-  sha256: adf6dfdf35f7c39cf543b243359d2c0ae79fc462f1ef57a09d0f1623f181796d
+  sha256: 6a534913523bd262f1928e4ff80046bf95e313c1694ce13e45fd17eea90fe691
 
 build:
   number: 0
   noarch: python
-  script: {{ PYTHON }} -m pip install . -vv
+
+  # noarch: only build on linux64
+  skip: true # [not linux64]
+  script: {{ PYTHON }} -m pip install . -vv --no-deps --no-build-isolation
 
 requirements:
   host:
     - pip
-    - python >=3.6
+    - python >=3.7
+    - wheel
   run:
+    - python >=3.7
+    - reactivex >=4.0.4
     - certifi >=14.05.14
-    - python >=3.6
     - python-dateutil >=2.5.3
-    - rx >=3.0.1
     - setuptools >=21.0.0
-    - six >=1.10
-    - urllib3 >=1.15.1
+    - urllib3 >=1.26.0
 
 test:
   imports:
@@ -44,5 +47,23 @@ about:
   license_file: LICENSE
 
 extra:
+  skip-lints:
+    # These are needed because of bug: https://github.com/anaconda-distribution/anaconda-linter/issues/197
+    - http_url
+    - invalid_url
+    - avoid_noarch
+
+    - missing_license_family
+    - host_section_needs_exact_pinnings
+    - missing_dev_url
+    - missing_description
+    - missing_documentation
+
+  anaconda-services:
+    ref:  https://anaconda.zendesk.com/agent/tickets/44101
+    reason: "influxdb-client"
+    recipe-maintainers:
+      - bkreider
+
   recipe-maintainers:
     - ruben-arts
